@@ -1,2 +1,2 @@
 # ML-from-scratch
-A repository to dump popular ML algorithms from scratch.
+A repository to archive popular ML algorithms from scratch. 
