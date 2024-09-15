@@ -1,12 +1,11 @@
 from utils.utils import load_df_from_csv
 from matplotlib import pyplot as plt
-import numpy as np
 import pandas as pd
 import math
 from sklearn.model_selection import train_test_split
-import random
 from sklearn.preprocessing import MinMaxScaler
 from typing import Callable, Literal, Tuple
+import seaborn as sns
 
 """
 References:
@@ -14,15 +13,16 @@ https://medium.com/@creatrohit9/k-nearest-neighbors-k-nn-the-distance-based-mach
 https://www.javatpoint.com/k-nearest-neighbor-algorithm-for-machine-learning
 """
 
+
 def calculate_eucledian_distance(first_point: list, second_point: list) -> float:
     x1, y1 = first_point[0], first_point[1]
-    x2, y2 = second_point[0], second_point[0]
+    x2, y2 = second_point[0], second_point[1]
     return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
 def calculate_manhattan_distance(first_point: list, second_point: list) -> float:
     x1, y1 = first_point[0], first_point[1]
-    x2, y2 = second_point[0], second_point[0]
+    x2, y2 = second_point[0], second_point[1]
     return math.sqrt(abs(x2 - x1) + abs(y2 - y1))
 
 
@@ -62,9 +62,7 @@ def vote_class(labels: list) -> float:
         elif label == SECOND_LABEL:
             n_second_label += 1
         else:
-            raise ValueError(
-                f"Label : {label} is not found, accepted labels: [0,1]"
-            )
+            raise ValueError(f"Label : {label} is not found, accepted labels: [0,1]")
 
     return FIRST_LABEL if n_first_label >= n_second_label else SECOND_LABEL
 
@@ -86,7 +84,7 @@ def scale_and_split_data(data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame
 def classifiy_point(
     data_train: pd.DataFrame,
     point_target: list,
-    k_neighbours: int = 5,
+    k_neighbours: int = 7,
     distance_method: Literal["euclidean", "manhattan"] = "euclidean",
 ) -> float:
     distance_function = choose_distance_function(distance_method)
@@ -109,16 +107,52 @@ def classifiy_point(
     return predicted_class
 
 
-def evaluate_knn():
-    # TODO: calculate accuracy for entire test data
-    pass
+def calculate_accuracy(predicted_labels: list, actual_labels: list) -> float:
+    n_correct = 0
+    n_data = len(predicted_labels)
+
+    for pred, actual in zip(predicted_labels, actual_labels):
+        if pred == actual:
+            n_correct += 1
+
+    return n_correct / n_data
+
+
+def visualize_prediction(data_test: pd.DataFrame, predicted_labels: list) -> None:
+    data_test["prediction"] = predicted_labels
+    sns.scatterplot(data_test, x="feature_1", y="feature_2", hue="prediction")
+    plt.show()
+
+
+def evaluate_knn(
+    data_test: pd.DataFrame, data_train: pd.DataFrame, visualize: bool = False
+) -> None:
+    actual_labels = data_test["class"].to_list()
+    predicted_labels = []
+
+    for row in data_test.itertuples():
+        idx = row.Index
+        point = [data_test.at[idx, "feature_1"], data_test.at[idx, "feature_2"]]
+        predicted_label = classifiy_point(data_train, point)
+        predicted_labels.append(predicted_label)
+
+    accuracy = calculate_accuracy(predicted_labels, actual_labels)
+    print("Accuracy for test data:", accuracy)
+
+    if visualize:
+        visualize_prediction(data_test, predicted_labels)
+
 
 if __name__ == "__main__":
     df = load_df_from_csv("classifications/knn/datasets/knn_dataset.csv")
     df_train, df_test = scale_and_split_data(df)
 
+    # for sample data
     point_target = get_sample_point(df_test)
     label_predicted = classifiy_point(
         df_train, point_target, distance_method="euclidean"
     )
-    print(label_predicted)
+    print(f"predicted label for point: {point_target} : {label_predicted}")
+
+    # for whole test data
+    evaluate_knn(df_test, df_train, visualize=True)
