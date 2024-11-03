@@ -8,7 +8,7 @@ from typing import Callable, Literal, Tuple
 import seaborn as sns
 
 """
-References:
+Theory References:
 https://medium.com/@creatrohit9/k-nearest-neighbors-k-nn-the-distance-based-machine-learning-algorithm-96cfc684412d
 https://www.javatpoint.com/k-nearest-neighbor-algorithm-for-machine-learning
 """
