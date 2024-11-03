@@ -10,6 +10,7 @@ Theory References:
 https://utsavdesai26.medium.com/linear-regression-made-simple-a-step-by-step-tutorial-fb8e737ea2d9
 """
 
+
 def calculate_mse(y_predictions: list, y_actual: list) -> float:
     sum_diff = 0
     n_data = len(y_predictions)
@@ -62,8 +63,21 @@ def split_data(
     return data_train, data_test
 
 
+def visualize_learning_error(error: list) -> None:
+    iterations = list(range(1, len(error) + 1))
+
+    plt.title("Error per epoch")
+    plt.plot(iterations, error)
+    plt.xlabel("Epoch")
+    plt.ylabel("Error")
+    plt.show()
+
+
 def fit(
-    data_train: pd.DataFrame, iterations: int = 1000, learning_rate: float = 0.001
+    data_train: pd.DataFrame,
+    iterations: int = 1000,
+    learning_rate: float = 0.001,
+    visualize_error: bool = False,
 ) -> Tuple[float, float]:
     m = random.uniform(0, 1)
     c = random.uniform(0, 1)
@@ -91,6 +105,9 @@ def fit(
         c = c - (learning_rate * derivative_c)
         error.append(loss)
         print(f"Loss for iteration {i+1}: {loss}")
+
+    if visualize_error:
+        visualize_learning_error(error)
 
     return m, c
 
@@ -131,6 +148,13 @@ if __name__ == "__main__":
     df = load_df_from_csv("regressions/linear_regression/datasets/linear_reg.csv")
     df_train, df_test = split_data(df)
 
-    m, c = fit(df_train, iterations=2000, learning_rate=0.005)
+    iterations = 2000
+    learning_rate = 0.005
+    m, c = fit(
+        df_train,
+        iterations=iterations,
+        learning_rate=learning_rate,
+        visualize_error=True,
+    )
 
     evaluate(df_test, m, c, visualize=True)
