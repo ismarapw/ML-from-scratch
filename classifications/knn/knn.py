@@ -67,13 +67,15 @@ def vote_class(labels: list) -> float:
     return FIRST_LABEL if n_first_label >= n_second_label else SECOND_LABEL
 
 
-def scale_and_split_data(data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def scale_and_split_data(
+    data: pd.DataFrame, test_size: float = 0.3
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
     X = data[["feature_1", "feature_2"]]
     y = data["class"]
     X_scaled = scale_data(X)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X_scaled, y, test_size=0.3, random_state=2
+        X_scaled, y, test_size=test_size, random_state=2
     )
     data_train = pd.concat([X_train, y_train], axis=1).reset_index(drop=True)
     data_test = pd.concat([X_test, y_test], axis=1).reset_index(drop=True)
@@ -119,8 +121,12 @@ def calculate_accuracy(predicted_labels: list, actual_labels: list) -> float:
 
 
 def visualize_prediction(data_test: pd.DataFrame, predicted_labels: list) -> None:
+    OUTPUT_PATH = "classifications/knn/output/test_data_predicted.jpg"
+
     data_test["prediction"] = predicted_labels
+    plt.title("Prediction result on Test Data")
     sns.scatterplot(data_test, x="feature_1", y="feature_2", hue="prediction")
+    plt.savefig(OUTPUT_PATH)
     plt.show()
 
 

@@ -64,12 +64,14 @@ def split_data(
 
 
 def visualize_learning_error(error: list) -> None:
+    OUTPUT_PATH = "regressions/linear_regression/output/learning_error.jpg"
     iterations = list(range(1, len(error) + 1))
 
     plt.title("Error per epoch")
     plt.plot(iterations, error)
     plt.xlabel("Epoch")
     plt.ylabel("Error")
+    plt.savefig(OUTPUT_PATH)
     plt.show()
 
 
@@ -113,14 +115,17 @@ def fit(
 
 
 def visualize_predictions(data_test: pd.DataFrame, m: float, c: float) -> None:
+    OUTPUT_PATH = "regressions/linear_regression/output/test_data_predicted.jpg"
+
     x_input = data_test["input"].to_list()
     y_actual = data_test["output"].to_list()
-    y_preds = [(m * x) + c for x in x_input]
+    y_preds = [predict_input(x, m, c) for x in x_input]
 
     plt.figure(figsize=(10, 5))
     plt.title(f"Regression Line: m = {round(m,2)}, c = {round(c,2)}")
     plt.plot(x_input, y_preds, color="blue")
     plt.scatter(x_input, y_actual)
+    plt.savefig(OUTPUT_PATH)
     plt.show()
 
 
