@@ -114,16 +114,17 @@ def fit(
     return m, c
 
 
-def visualize_predictions(data_test: pd.DataFrame, m: float, c: float) -> None:
+def visualize_predictions(
+    data_test: pd.DataFrame, y_predictions: list, m: float, c: float
+) -> None:
     OUTPUT_PATH = "regressions/linear_regression/output/test_data_predicted.jpg"
 
     x_input = data_test["input"].to_list()
     y_actual = data_test["output"].to_list()
-    y_preds = [predict_input(x, m, c) for x in x_input]
 
     plt.figure(figsize=(10, 5))
     plt.title(f"Regression Line: m = {round(m,2)}, c = {round(c,2)}")
-    plt.plot(x_input, y_preds, color="blue")
+    plt.plot(x_input, y_predictions, color="blue")
     plt.scatter(x_input, y_actual)
     plt.savefig(OUTPUT_PATH)
     plt.show()
@@ -146,7 +147,7 @@ def evaluate(
     print(f"Mean Squared Error for Test data : {round(error, 2)}")
 
     if visualize:
-        visualize_predictions(data_test, m, c)
+        visualize_predictions(data_test, predicted_data, m, c)
 
 
 if __name__ == "__main__":
