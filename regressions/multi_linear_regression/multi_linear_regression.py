@@ -5,6 +5,12 @@ import pandas as pd
 from typing import Tuple
 from sklearn.model_selection import train_test_split
 
+"""
+Theory References:
+https://www.sjsu.edu/faculty/guangliang.chen/Math261a/Ch3slides-multiple-linear-regression.pdf
+https://www.gatsby.ucl.ac.uk/teaching/courses/sntn/sntn-2017/resources/Matrix_derivatives_cribsheet.pdf
+"""
+
 
 def calculate_mae(y_predictions: np.ndarray, y_actual: np.ndarray) -> float:
     return np.mean(np.absolute(y_actual - y_predictions))
