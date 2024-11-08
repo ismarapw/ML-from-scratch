@@ -12,28 +12,6 @@ https://www.gatsby.ucl.ac.uk/teaching/courses/sntn/sntn-2017/resources/Matrix_de
 """
 
 
-def calculate_mae(y_predictions: np.ndarray, y_actual: np.ndarray) -> float:
-    return np.mean(np.absolute(y_actual - y_predictions))
-
-
-def get_beta_matrix(X_input: np.ndarray, y_actual: np.ndarray) -> np.ndarray:
-    X = X_input
-    y = y_actual
-
-    b = np.matmul(X.T, X)
-    b = np.linalg.inv(b)
-    b = np.matmul(b, X.T)
-    b = np.matmul(b, y)
-
-    return b
-
-
-def predict_data(beta: np.ndarray, X_input: np.ndarray) -> np.ndarray:
-    X = X_input
-    b = beta
-    return np.matmul(X, b)
-
-
 def split_data(
     data: pd.DataFrame, test_size: float = 0.3
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -57,6 +35,32 @@ def fit(data_train: pd.DataFrame) -> np.ndarray:
     return beta
 
 
+def get_beta_matrix(X_input: np.ndarray, y_actual: np.ndarray) -> np.ndarray:
+    X = add_vector_one_to_data(X_input)
+    y = y_actual
+
+    b = np.matmul(X.T, X)
+    b = np.linalg.inv(b)
+    b = np.matmul(b, X.T)
+    b = np.matmul(b, y)
+
+    return b
+
+
+def evaluate(
+    beta: np.ndarray, data_test: pd.DataFrame, visualize: bool = False
+) -> None:
+    X = data_test.loc[:, ["feature_1", "feature_2"]].to_numpy()
+    y_actual = data_test["output"].to_numpy()
+
+    y_predicted = predict_data(beta, X)
+    mae = calculate_mae(y_predicted, y_actual)
+    print("Mean Absolute Error: ", mae)
+
+    if visualize:
+        visualize_prediction(beta, y_actual, X)
+
+
 def visualize_prediction(
     beta: np.ndarray, y_actual: np.ndarray, X_input: np.ndarray
 ) -> None:
@@ -69,7 +73,7 @@ def visualize_prediction(
     x1_space = np.linspace(lower_x1, upper_x1, 30)
     x2_space = np.linspace(lower_x2, upper_x2, 30)
     x1_grid, x2_grid = np.meshgrid(x1_space, x2_space)
-    y_preds = x1_grid * beta[0] + x2_grid * beta[1]
+    y_preds = beta[0] + (x1_grid * beta[1]) + (x2_grid * beta[2])
 
     fig = plt.figure(figsize=(12, 4))
     ax1 = fig.add_subplot(131, projection="3d")
@@ -90,18 +94,20 @@ def visualize_prediction(
     plt.show()
 
 
-def evaluate(
-    beta: np.ndarray, data_test: pd.DataFrame, visualize: bool = False
-) -> None:
-    X = data_test.loc[:, ["feature_1", "feature_2"]].to_numpy()
-    y_actual = data_test["output"].to_numpy()
+def predict_data(beta: np.ndarray, X_input: np.ndarray) -> np.ndarray:
+    X = add_vector_one_to_data(X_input)
+    b = beta
+    return np.matmul(X, b)
 
-    y_predicted = predict_data(beta, X)
-    mae = calculate_mae(y_predicted, y_actual)
-    print("Mean Absolute Error: ", mae)
 
-    if visualize:
-        visualize_prediction(beta, y_actual, X)
+def add_vector_one_to_data(X_input: np.ndarray) -> np.ndarray:
+    vector_one = np.ones((X_input.shape[0], 1))
+    X = np.concatenate((vector_one, X_input), axis=1)
+    return X
+
+
+def calculate_mae(y_predictions: np.ndarray, y_actual: np.ndarray) -> float:
+    return np.mean(np.absolute(y_actual - y_predictions))
 
 
 if __name__ == "__main__":
