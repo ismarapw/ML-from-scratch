@@ -73,7 +73,7 @@ def visualize_prediction(
     x1_space = np.linspace(lower_x1, upper_x1, 30)
     x2_space = np.linspace(lower_x2, upper_x2, 30)
     x1_grid, x2_grid = np.meshgrid(x1_space, x2_space)
-    y_preds = beta[0] + (x1_grid * beta[1]) + (x2_grid * beta[2])
+    reggresion_line = beta[0] + (x1_grid * beta[1]) + (x2_grid * beta[2])
 
     fig = plt.figure(figsize=(12, 4))
     ax1 = fig.add_subplot(131, projection="3d")
@@ -82,7 +82,7 @@ def visualize_prediction(
     axes = [ax1, ax2, ax3]
 
     for ax in axes:
-        ax.plot_surface(x1_grid, x2_grid, y_preds, alpha=0.5)
+        ax.plot_surface(x1_grid, x2_grid, reggresion_line, alpha=0.5)
         ax.scatter(X[:, 0], X[:, 1], y_actual)
 
     ax1.view_init(elev=28, azim=120)
