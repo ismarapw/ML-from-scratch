@@ -53,12 +53,12 @@ def get_polynomial_features(X_input: np.ndarray, poly_degree: int) -> np.ndarray
     column_size = poly_degree + 1
     vector_input = X_input.reshape(-1)
     input_size = vector_input.shape[0]
-    poly_matrix = np.empty((input_size, column_size))
+    poly_features = np.empty((input_size, column_size))
 
     for degree in range(column_size):
-        poly_matrix[:, degree] = vector_input**degree
+        poly_features[:, degree] = vector_input**degree
 
-    return poly_matrix
+    return poly_features
 
 
 def evaluate(
