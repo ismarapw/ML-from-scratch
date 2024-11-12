@@ -89,16 +89,10 @@ def fit(
 
     for i in range(iterations):
         predicted_data = []
-
-        for row in data_train.itertuples():
-            idx = row.Index
-
-            x = data_train.at[idx, "input"]
-            y_actual = data_train.at[idx, "output"]
+        
+        for x in input_data:
             y_pred = predict_input(x, m, c)
-
             predicted_data.append(y_pred)
-            actual_data.append(y_actual)
 
         loss = calculate_mse(predicted_data, actual_data)
         derivative_m = gradient_loss_m(predicted_data, actual_data, input_data)
