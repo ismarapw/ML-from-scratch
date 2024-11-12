@@ -89,7 +89,7 @@ def fit(
 
     for i in range(iterations):
         predicted_data = []
-        
+
         for x in input_data:
             y_pred = predict_input(x, m, c)
             predicted_data.append(y_pred)
@@ -128,13 +128,11 @@ def evaluate(
     data_test: pd.DataFrame, m: float, c: float, visualize: bool = False
 ) -> None:
     actual_data = data_test["output"].to_list()
+    input_data = data_test["input"].to_list()
     predicted_data = []
 
-    for row in data_test.itertuples():
-        idx = row.Index
-        x = data_test.at[idx, "input"]
+    for x in input_data:
         y_pred = predict_input(x, m, c)
-
         predicted_data.append(y_pred)
 
     error = calculate_mse(predicted_data, actual_data)
