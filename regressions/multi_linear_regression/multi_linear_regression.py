@@ -73,7 +73,8 @@ def visualize_prediction(
     x1_space = np.linspace(lower_x1, upper_x1, 30)
     x2_space = np.linspace(lower_x2, upper_x2, 30)
     x1_grid, x2_grid = np.meshgrid(x1_space, x2_space)
-    reggresion_line = beta[0] + (x1_grid * beta[1]) + (x2_grid * beta[2])
+    reggresion_line = predict_data(beta, np.column_stack((x1_grid.ravel(), x2_grid.ravel())))
+    reggresion_line = reggresion_line.reshape(x1_grid.shape)
 
     fig = plt.figure(figsize=(12, 4))
     ax1 = fig.add_subplot(131, projection="3d")

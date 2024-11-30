@@ -94,10 +94,7 @@ def visualize_prediction(data_test: pd.DataFrame, beta: np.ndarray) -> None:
 
     upper_x, lower_x = x_input.max(), x_input.min()
     x_space = np.linspace(lower_x, upper_x, 50)
-    reggresion_line = np.zeros((len(x_space)))
-
-    for i in range(len(beta)):
-        reggresion_line += beta[i] * (x_space**i)
+    reggresion_line = predict_data(beta, x_space)
 
     plt.figure(figsize=(10, 5))
     plt.title("Polynomial Line")
